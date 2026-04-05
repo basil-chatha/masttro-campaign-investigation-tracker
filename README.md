@@ -18,7 +18,7 @@ The finished product lets an operator browse campaigns, spot health issues, open
 
 ## Repo structure
 
-```
+```text
 frontend/          → React app shell with routing and baseline styling
 backend/           → FastAPI server with health endpoint and DB connectivity
 ```
@@ -57,17 +57,49 @@ Over the course of the workshop, this skeleton becomes a working product while d
 
 ## Getting started
 
-```bash
-# Start the backend
-cd backend
-# (setup instructions provided in class)
+### Prerequisites
 
-# Start the frontend
-cd frontend
-# (setup instructions provided in class)
+- Python 3.10+ and [uv](https://docs.astral.sh/uv/)
+- [Bun](https://bun.sh/)
+- [Supabase CLI](https://supabase.com/docs/guides/cli) and Docker (for local Supabase)
+
+### 1. Start local Supabase
+
+```bash
+supabase start
 ```
 
-Detailed environment setup and secrets configuration will be handled at the start of the session.
+This starts PostgreSQL, Auth, and other Supabase services in Docker. The seed data in `supabase/seed.sql` is applied automatically. Note the `DB URL` from the output — you'll need it next.
+
+### 2. Start the backend
+
+```bash
+cd backend
+cp .env.example .env        # then set DATABASE_URL to the DB URL from `supabase start`
+uv venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+uv pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+
+API docs will be at `http://localhost:8000/docs`.
+
+### 3. Start the frontend
+
+```bash
+cd frontend
+bun install
+bun run dev
+```
+
+Opens at `http://localhost:5173`. The Vite dev server proxies `/api` requests to the backend.
+
+### 4. Run backend tests
+
+```bash
+cd backend
+pytest
+```
 
 ## Workshop context
 

@@ -1,6 +1,7 @@
 # Instructor-only assets (not for participants)
 /instructor-notes/
 loopme-seed-data-instructions.md
+CLAUDE.md
 
 # Python
 __pycache__/
