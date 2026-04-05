@@ -6,9 +6,10 @@ will be added during the workshop.
 """
 from typing import List
 from fastapi import APIRouter, Depends
+from sqlalchemy import func, and_
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models import Campaign
+from app.models import Campaign, CampaignHealth
 from app.schemas import CampaignOut
 
 router = APIRouter(prefix="/campaigns", tags=["campaigns"])
@@ -20,8 +21,36 @@ def list_campaigns(db: Session = Depends(get_db)):
     Get all campaigns.
     Returns a list of all campaigns in the system.
     """
-    campaigns = db.query(Campaign).all()
-    return campaigns
+    latest_sq = (
+        db.query(
+            CampaignHealth.campaign_id,
+            func.max(CampaignHealth.snapshot_at).label("max_snapshot_at"),
+        )
+        .group_by(CampaignHealth.campaign_id)
+        .subquery()
+    )
+
+    rows = (
+        db.query(Campaign, CampaignHealth.anomaly_flag)
+        .outerjoin(
+            latest_sq,
+            Campaign.id == latest_sq.c.campaign_id,
+        )
+        .outerjoin(
+            CampaignHealth,
+            and_(
+                CampaignHealth.campaign_id == latest_sq.c.campaign_id,
+                CampaignHealth.snapshot_at == latest_sq.c.max_snapshot_at,
+            ),
+        )
+        .all()
+    )
+
+    results = []
+    for campaign, anomaly_flag in rows:
+        campaign.needs_help = bool(anomaly_flag)
+        results.append(campaign)
+    return results
 
 
 # TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add GET /campaigns/{campaign_id} endpoint.

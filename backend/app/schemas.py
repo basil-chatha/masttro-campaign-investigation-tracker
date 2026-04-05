@@ -28,6 +28,7 @@ class CampaignOut(BaseModel):
     region: Optional[str] = None
     created_at: datetime
     updated_at: datetime
+    needs_help: bool = False
 
 
 # TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add CampaignHealthOut Pydantic schema.
