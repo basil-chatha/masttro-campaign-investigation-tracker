@@ -28,3 +28,48 @@ class CampaignOut(BaseModel):
     region: Optional[str] = None
     created_at: datetime
     updated_at: datetime
+
+
+# TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add CampaignHealthOut Pydantic schema.
+#   Fields: id, campaign_id, snapshot_at, impressions, clicks, ctr, viewability,
+#   completion_rate, spend_usd, budget_pacing_pct, delivery_rate_pct, anomaly_flag,
+#   anomaly_reason, delivery_note.
+#   Needed for the campaign detail endpoint that returns health snapshot data.
+
+
+# TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add CampaignDetailOut Pydantic schema.
+#   Extends CampaignOut with a nested list of CampaignHealthOut snapshots
+#   (e.g. `health_snapshots: List[CampaignHealthOut]`).
+#   Used as the response model for GET /campaigns/{id}.
+
+
+# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add InvestigationCreate Pydantic schema.
+#   Fields for creating a new investigation: campaign_id, source_snapshot_id (optional),
+#   issue_type, severity, owner_name, question, hypothesis, next_action.
+#   Captures the core structured fields during the "Start Investigation" form submission.
+
+
+# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add InvestigationOut Pydantic schema.
+#   Response schema for an investigation record. All columns from the investigations table.
+#   Include model_config = ConfigDict(from_attributes=True).
+
+
+# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add InvestigationEvidenceOut Pydantic schema.
+#   Response schema for evidence records. All columns from investigation_evidence table.
+
+
+# TODO [Step 10 — Day 2 / Module 03 — Parallel Execution]: Add InvestigationStatusUpdate Pydantic schema.
+#   Fields: status (constrained to "New" | "Investigating" | "Needs Action" | "Resolved"),
+#   resolution_summary (optional, required when status is "Resolved").
+#   Used by the PATCH /investigations/{id}/status endpoint for status progression.
+
+
+# TODO [Step 2 — Day 1 / Module 02 — Economics]: Add AiRunOut Pydantic schema.
+#   Fields: id, investigation_id, model, task_type, input_tokens, output_tokens,
+#   estimated_cost_usd, latency_ms, prompt_summary, recommendation_summary, created_at.
+#   Used to surface AI usage data in the investigation detail view.
+
+
+# TODO [Step 12 — Day 2 / Module 05 — Production Rollout]: Add AiRunCreate Pydantic schema (if needed).
+#   Fields for logging a new AI run. May be needed when surfacing the AI usage card
+#   on the investigation detail page and closing the economics loop.

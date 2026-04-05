@@ -17,6 +17,12 @@ export default function CampaignList() {
   if (loading) return <p className="text-muted-foreground">Loading campaigns…</p>;
   if (error) return <p className="text-destructive">Error: {error}</p>;
 
+  // TODO [Step 1 — Day 1 / Module 01 — First Win]: Make one tiny, visible change to the campaign list.
+  //   Examples: add a health badge column, surface a delivery note, show an anomaly flag,
+  //   or display an extra evidence field. The goal is a bounded first win the room can
+  //   verify instantly. Use plan mode first to inspect the repo, then make the change.
+  //   Re-run the app and review the diff before moving on.
+
   return (
     <div>
       <h2 className="mb-6 text-2xl font-semibold">Campaigns</h2>
@@ -32,6 +38,9 @@ export default function CampaignList() {
               <th className="px-4 py-3 text-left font-medium text-muted-foreground">Objective</th>
               <th className="px-4 py-3 text-left font-medium text-muted-foreground">Channel</th>
               <th className="px-4 py-3 text-right font-medium text-muted-foreground">Budget</th>
+              {/* TODO [Step 1 — Day 1 / Module 01 — First Win]: Add a new <th> here for the
+                  health badge, delivery note, or anomaly indicator column. This is the
+                  "one small UI change" that demonstrates Claude's first bounded win. */}
             </tr>
           </thead>
           <tbody>
@@ -58,6 +67,10 @@ export default function CampaignList() {
                 <td className="px-4 py-3 text-right tabular-nums">
                   ${c.budget_usd?.toLocaleString()}
                 </td>
+                {/* TODO [Step 1 — Day 1 / Module 01 — First Win]: Add a new <td> here
+                    to display the health badge, delivery note, or anomaly indicator
+                    for each campaign row. This may require extending the backend
+                    CampaignOut schema or adding a joined query. */}
               </tr>
             ))}
           </tbody>
