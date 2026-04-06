@@ -35,13 +35,21 @@ export async function getCampaigns() {
   return fetchApi('/campaigns');
 }
 
-// TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add getCampaign(id) function.
-//   Fetches a single campaign with health snapshots from GET /campaigns/{id}.
-//   Used by the CampaignDetail page to load full campaign data.
+/**
+ * Fetch a single campaign with health snapshots.
+ * @param {string} id — Campaign ID
+ */
+export async function getCampaign(id) {
+  return fetchApi(`/campaigns/${id}`);
+}
 
-// TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add getCampaignHealth(campaignId) function.
-//   Fetches health snapshots from GET /campaigns/{id}/health.
-//   May be used if health data is loaded separately from campaign detail.
+/**
+ * Fetch health snapshots for a campaign.
+ * @param {string} campaignId — Campaign ID
+ */
+export async function getCampaignHealth(campaignId) {
+  return fetchApi(`/campaigns/${campaignId}/health`);
+}
 
 // TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add createInvestigation(data) function.
 //   POSTs to /investigations with the investigation form data.

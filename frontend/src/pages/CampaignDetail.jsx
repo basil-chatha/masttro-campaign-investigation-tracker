@@ -1,8 +1,7 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-
-// TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Import { useState, useEffect } from 'react'
-//   and import getCampaign (or getCampaignHealth) from '../api/client' once those
-//   API functions are built. Load campaign data + health snapshots on mount.
+import { getCampaign } from '../api/client';
+import { Badge } from '@/components/ui/badge';
 
 // TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Import createInvestigation and
 //   getInvestigations from '../api/client' once those API functions are built.
@@ -15,14 +14,28 @@ import { useParams, Link } from 'react-router-dom';
 
 export default function CampaignDetail() {
   const { id } = useParams();
+  const [campaign, setCampaign] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add state for campaign data, health snapshots,
-  //   loading, and error. Fetch campaign detail (with health data) on component mount using
-  //   useEffect. This is the AIDLC demo vehicle — plan the approach in plan mode first,
-  //   clarify required fields and what success means, then implement.
+  useEffect(() => {
+    let stale = false;
+    setLoading(true);
+    getCampaign(id)
+      .then((data) => { if (!stale) { setCampaign(data); setError(null); } })
+      .catch((err) => { if (!stale) { setError(err.message); setCampaign(null); } })
+      .finally(() => { if (!stale) setLoading(false); });
+    return () => { stale = true; };
+  }, [id]);
 
   // TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add state for investigations list.
   //   Fetch investigations for this campaign on mount. Display them below the campaign info.
+
+  if (loading) return <p className="text-muted-foreground">Loading campaign...</p>;
+  if (error) return <p className="text-destructive">Error: {error}</p>;
+  if (!campaign) return <p className="text-muted-foreground">Campaign not found.</p>;
+
+  const snapshots = campaign.health_snapshots || [];
 
   return (
     <div>
@@ -30,44 +43,124 @@ export default function CampaignDetail() {
         &larr; Back to campaigns
       </Link>
 
-      <h2 className="mt-4 text-2xl font-semibold">Campaign Detail</h2>
-
-      {/* TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Replace this placeholder with real campaign
-          detail display. Show campaign metadata (name, advertiser, status, budget, dates, etc.)
-          and a summary of health snapshots (e.g. latest CTR, viewability, anomaly flags).
-          Include a small evidence summary section. */}
-      <div className="mt-4 rounded-lg border p-6">
-        <p className="text-sm text-muted-foreground">Campaign ID: {id}</p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Detail view and investigation workflow will be built during the workshop.
-        </p>
+      <div className="mt-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-semibold">{campaign.name}</h2>
+          <StatusBadge status={campaign.status} />
+          {campaign.needs_help && <Badge variant="destructive">Needs Help</Badge>}
+        </div>
+        {/* TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Replace alert with
+            real investigation creation form/modal. */}
+        <button
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          onClick={() => alert('Investigation form coming in Module 05')}
+        >
+          Start Investigation
+        </button>
       </div>
 
-      {/* TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add a "Start Investigation" button
-          as a visible entry point. This is the bridge into the full investigation workflow
-          built in Step 5. The button should open a form or modal for creating a new investigation. */}
+      <div className="mt-6 rounded-lg border p-6">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm md:grid-cols-4">
+          <Field label="Code" value={campaign.campaign_code} />
+          <Field label="Advertiser" value={campaign.advertiser} />
+          <Field label="Objective" value={campaign.objective} />
+          <Field label="Channel" value={campaign.channel} />
+          <Field label="Start" value={fmtDate(campaign.start_date)} />
+          <Field label="End" value={fmtDate(campaign.end_date)} />
+          <Field label="Budget" value={`$${campaign.budget_usd?.toLocaleString()}`} />
+          <Field label="Owner" value={campaign.owner_name} />
+          <Field label="Region" value={campaign.region} />
+        </div>
+      </div>
 
-      {/* TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add the investigation creation form.
-          Capture core fields: question, hypothesis, owner_name, next_action, issue_type, severity.
-          On submit, call createInvestigation() and refresh the investigations list.
-          This is the "ticket-sized workflow" — form capture and persistence. */}
+      <h3 className="mt-8 mb-4 text-lg font-semibold">Health Snapshots</h3>
+
+      {snapshots.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No health data available.</p>
+      ) : (
+        <div className="overflow-hidden rounded-lg border">
+          <table className="w-full text-sm">
+            <thead className="border-b bg-muted/50">
+              <tr>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Date</th>
+                <th className="px-4 py-3 text-right font-medium text-muted-foreground">Impressions</th>
+                <th className="px-4 py-3 text-right font-medium text-muted-foreground">Clicks</th>
+                <th className="px-4 py-3 text-right font-medium text-muted-foreground">CTR</th>
+                <th className="px-4 py-3 text-right font-medium text-muted-foreground">Viewability</th>
+                <th className="px-4 py-3 text-right font-medium text-muted-foreground">Spend</th>
+                <th className="px-4 py-3 text-right font-medium text-muted-foreground">Pacing</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Anomaly</th>
+              </tr>
+            </thead>
+            <tbody>
+              {snapshots.map((s) => (
+                <tr key={s.id} className="border-b last:border-0 hover:bg-muted/50">
+                  <td className="px-4 py-3">{fmtDate(s.snapshot_at)}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{s.impressions?.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{s.clicks?.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{pct(s.ctr)}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{pct(s.viewability)}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">${s.spend_usd?.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{pct(s.budget_pacing_pct)}</td>
+                  <td className="px-4 py-3">
+                    {s.anomaly_flag ? (
+                      <Badge variant="destructive" title={s.anomaly_reason}>
+                        {s.anomaly_reason || 'Anomaly'}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add an investigations list section.
           Display existing investigations for this campaign with their status, question,
           owner, and severity. Each investigation should be clickable for detail view. */}
 
       {/* TODO [Step 10 — Day 2 / Module 03 — Parallel Execution]: Add investigation status
-          progression UI. Each investigation card/row should show its current status with
-          a visual indicator and allow status transitions:
-          New → Investigating → Needs Action → Resolved.
-          Include a status dropdown or button group that calls updateInvestigationStatus().
-          This is the bounded parallel-work feature — one stream for backend logic,
-          one for this frontend UI, one for tests. */}
+          progression UI. */}
 
       {/* TODO [Step 12 — Day 2 / Module 05 — Production Rollout]: Add an AI usage card or
-          recommendation note section on the investigation detail view. Surface data from
-          ai_runs: model used, token count, estimated cost, latency, and recommendation summary.
-          This closes the economics loop from Step 2 — making AI usage visible in the product. */}
+          recommendation note section on the investigation detail view. */}
     </div>
+  );
+}
+
+function Field({ label, value }) {
+  return (
+    <div>
+      <span className="font-medium text-muted-foreground">{label}</span>
+      <span className="mt-0.5 block">{value || '-'}</span>
+    </div>
+  );
+}
+
+function fmtDate(iso) {
+  if (!iso) return '-';
+  return new Date(iso).toLocaleDateString();
+}
+
+function pct(value) {
+  if (value == null) return '-';
+  return `${value.toFixed(1)}%`;
+}
+
+const STATUS_STYLES = {
+  Active: 'bg-green-50 text-green-700',
+  Paused: 'bg-amber-50 text-amber-700',
+  Completed: 'bg-gray-100 text-gray-600',
+};
+const DEFAULT_STATUS_STYLE = 'bg-gray-100 text-gray-600';
+
+function StatusBadge({ status }) {
+  return (
+    <Badge className={`font-medium ${STATUS_STYLES[status] || DEFAULT_STATUS_STYLE}`}>
+      {status}
+    </Badge>
   );
 }
