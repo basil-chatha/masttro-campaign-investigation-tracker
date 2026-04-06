@@ -5,7 +5,7 @@ Main FastAPI application entry point.
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.routers import campaigns, ai_runs
+from app.routers import campaigns, investigations, ai_runs
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -35,12 +35,7 @@ async def runtime_error_handler(request: Request, exc: RuntimeError):
 
 # Register routers
 app.include_router(campaigns.router)
-
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Import and register the investigations router.
-#   Create `app/routers/investigations.py` with an APIRouter(prefix="/investigations").
-#   Then: `from app.routers import investigations` and `app.include_router(investigations.router)`.
-#   This router handles investigation CRUD: create, list, get by id, and status updates.
-
+app.include_router(investigations.router)
 app.include_router(ai_runs.router)
 
 

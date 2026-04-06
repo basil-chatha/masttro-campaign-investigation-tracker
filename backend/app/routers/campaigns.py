@@ -9,8 +9,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, and_
 from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
-from app.models import Campaign, CampaignHealth
-from app.schemas import CampaignOut, CampaignDetailOut, CampaignHealthOut
+from app.models import Campaign, CampaignHealth, Investigation
+from app.schemas import CampaignOut, CampaignDetailOut, CampaignHealthOut, InvestigationOut
 
 router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 
@@ -83,6 +83,12 @@ def get_campaign_health(campaign_id: str, db: Session = Depends(get_db)):
     )
 
 
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add GET /campaigns/{campaign_id}/investigations endpoint.
-#   Returns all investigations for a given campaign.
-#   Enables the campaign detail page to list existing investigations.
+@router.get("/{campaign_id}/investigations", response_model=List[InvestigationOut])
+def get_campaign_investigations(campaign_id: str, db: Session = Depends(get_db)):
+    """Get investigations for a specific campaign."""
+    return (
+        db.query(Investigation)
+        .filter(Investigation.campaign_id == campaign_id)
+        .order_by(Investigation.opened_at.desc())
+        .all()
+    )

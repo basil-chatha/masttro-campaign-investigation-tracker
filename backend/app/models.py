@@ -18,11 +18,6 @@ Base = declarative_base()
 #   to CampaignHealth (e.g. `health_snapshots = relationship("CampaignHealth", back_populates=...)`)
 #   so the campaign detail endpoint can eagerly load health data.
 
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add SQLAlchemy relationship from Campaign
-#   to Investigation (e.g. `investigations = relationship("Investigation", back_populates=...)`)
-#   so the campaign detail page can show associated investigations.
-
-
 class Campaign(Base):
     """Campaign table — represents a marketing campaign."""
     __tablename__ = "campaigns"
@@ -43,6 +38,7 @@ class Campaign(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     health_snapshots = relationship("CampaignHealth", back_populates="campaign", order_by="CampaignHealth.snapshot_at")
+    investigations = relationship("Investigation", back_populates="campaign", order_by="Investigation.opened_at.desc()")
 
 
 class CampaignHealth(Base):
@@ -84,17 +80,47 @@ class AiRun(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add the Investigation ORM model.
-#   Maps to the `investigations` table. Columns: id, campaign_id (FK → campaigns.id),
-#   source_snapshot_id (FK → campaign_health.id), issue_type, severity, status, owner_name,
-#   question, hypothesis, next_action, resolution_summary, opened_at, updated_at, resolved_at.
-#   Core fields to capture live: question, hypothesis, owner, next_action.
-#   Status workflow: New → Investigating → Needs Action → Resolved.
+class Investigation(Base):
+    """Investigation record — tracks a campaign performance issue through resolution."""
+    __tablename__ = "investigations"
+
+    id = Column(String(50), primary_key=True, index=True)
+    campaign_id = Column(String(50), ForeignKey("campaigns.id"), index=True)
+    source_snapshot_id = Column(String(50), ForeignKey("campaign_health.id"), nullable=True)
+    issue_type = Column(String(100))
+    severity = Column(String(50))
+    status = Column(String(50))
+    owner_name = Column(String(255), nullable=True)
+    question = Column(Text)
+    hypothesis = Column(Text)
+    next_action = Column(Text)
+    resolution_summary = Column(Text, nullable=True)
+    opened_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    resolved_at = Column(DateTime, nullable=True)
+
+    campaign = relationship("Campaign", back_populates="investigations")
+    evidence = relationship("InvestigationEvidence", back_populates="investigation")
 
 
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add the InvestigationEvidence ORM model.
-#   Maps to the `investigation_evidence` table. Columns: id, investigation_id (FK → investigations.id),
-#   snapshot_id (FK → campaign_health.id), evidence_type, title, summary, metric_name,
-#   metric_value, metric_unit, source_label, source_ref, captured_at, captured_by,
-#   is_key_evidence, sort_order.
-#   Typed evidence: metrics, notes, QA checks, recommendations.
+class InvestigationEvidence(Base):
+    """Evidence record — typed evidence attached to an investigation."""
+    __tablename__ = "investigation_evidence"
+
+    id = Column(String(50), primary_key=True, index=True)
+    investigation_id = Column(String(50), ForeignKey("investigations.id"), index=True)
+    snapshot_id = Column(String(50), ForeignKey("campaign_health.id"), nullable=True)
+    evidence_type = Column(String(100))
+    title = Column(String(255))
+    summary = Column(Text)
+    metric_name = Column(String(100), nullable=True)
+    metric_value = Column(Float, nullable=True)
+    metric_unit = Column(String(50), nullable=True)
+    source_label = Column(String(255), nullable=True)
+    source_ref = Column(String(255), nullable=True)
+    captured_at = Column(DateTime, default=datetime.utcnow)
+    captured_by = Column(String(255), nullable=True)
+    is_key_evidence = Column(Boolean, default=False)
+    sort_order = Column(Integer, nullable=True)
+
+    investigation = relationship("Investigation", back_populates="evidence")

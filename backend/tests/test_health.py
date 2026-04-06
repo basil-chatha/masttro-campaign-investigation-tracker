@@ -70,10 +70,29 @@ def test_campaign_health_endpoint_exists():
     assert response.status_code in [200, 404, 503]
 
 
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add test_investigations_endpoint_exists().
-#   Verify POST /investigations and GET /investigations routes are routable.
-#   Follow the same pattern as test_campaigns_endpoint_exists (accept 200 or 503).
-#   Run at least one real validation step as part of the ticket→code→test workflow.
+def test_investigations_list_endpoint_exists():
+    """Test that GET /investigations endpoint exists and is routable."""
+    response = client.get("/investigations")
+    assert response.status_code in [200, 503]
+
+
+def test_create_investigation_endpoint_exists():
+    """Test that POST /investigations is routable."""
+    response = client.post("/investigations", json={
+        "campaign_id": "cmp_1001",
+        "issue_type": "Test",
+        "severity": "Low",
+        "question": "Test question?",
+        "hypothesis": "Test hypothesis",
+        "next_action": "Test action",
+    })
+    assert response.status_code in [200, 404, 422, 503]
+
+
+def test_campaign_investigations_endpoint_exists():
+    """Test that GET /campaigns/{id}/investigations is routable."""
+    response = client.get("/campaigns/cmp_1001/investigations")
+    assert response.status_code in [200, 404, 503]
 
 
 # TODO [Step 10 — Day 2 / Module 03 — Parallel Execution]: Add test_investigation_status_update().

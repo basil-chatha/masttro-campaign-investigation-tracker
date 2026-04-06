@@ -18,10 +18,9 @@ const API_BASE = '/api';
  * Generic fetch wrapper with error handling.
  * @param {string} path — API path (prefixed with /api by the Vite proxy)
  */
-async function fetchApi(path) {
+async function fetchApi(path, options = {}) {
   const url = `${API_BASE}${path}`;
-
-  const response = await fetch(url);
+  const response = await fetch(url, options);
   if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`);
   }
@@ -51,14 +50,32 @@ export async function getCampaignHealth(campaignId) {
   return fetchApi(`/campaigns/${campaignId}/health`);
 }
 
-// TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add createInvestigation(data) function.
-//   POSTs to /investigations with the investigation form data.
-//   Needs to extend fetchApi or add a new fetchApiPost helper that supports
-//   POST method with JSON body (the current fetchApi only supports GET).
+/**
+ * POST wrapper — delegates to fetchApi with JSON body.
+ */
+async function fetchApiPost(path, body) {
+  return fetchApi(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+}
 
-// TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add getInvestigations(campaignId) function.
-//   Fetches investigations for a campaign from GET /campaigns/{id}/investigations
-//   or GET /investigations?campaign_id={id}.
+/**
+ * Create a new investigation.
+ * @param {object} data — Investigation form data
+ */
+export async function createInvestigation(data) {
+  return fetchApiPost('/investigations', data);
+}
+
+/**
+ * Fetch investigations for a campaign.
+ * @param {string} campaignId — Campaign ID
+ */
+export async function getInvestigations(campaignId) {
+  return fetchApi(`/campaigns/${campaignId}/investigations`);
+}
 
 // TODO [Step 10 — Day 2 / Module 03 — Parallel Execution]: Add updateInvestigationStatus(id, status, resolutionSummary) function.
 //   PATCHes /investigations/{id}/status to progress investigation status.
