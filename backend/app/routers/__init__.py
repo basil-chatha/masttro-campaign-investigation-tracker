@@ -12,7 +12,3 @@
 #   Status progression: New → Investigating → Needs Action → Resolved.
 #   Use InvestigationStatusUpdate schema. Set resolved_at when status becomes "Resolved".
 
-# TODO [Step 12 — Day 2 / Module 05 — Production Rollout]: Create a new file
-#   `ai_runs.py` in this directory. It should define an APIRouter and implement:
-#     - GET /investigations/{id}/ai-runs — list AI run records for an investigation
-#   This surfaces the ai_runs data seeded in the database for the economics discussion.
