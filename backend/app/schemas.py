@@ -6,7 +6,7 @@ for health snapshots, investigations, and AI runs will be built
 during the workshop as new endpoints are added.
 """
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel, ConfigDict
 
 
@@ -56,19 +56,60 @@ class CampaignDetailOut(CampaignOut):
     health_snapshots: List[CampaignHealthOut] = []
 
 
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add InvestigationCreate Pydantic schema.
-#   Fields for creating a new investigation: campaign_id, source_snapshot_id (optional),
-#   issue_type, severity, owner_name, question, hypothesis, next_action.
-#   Captures the core structured fields during the "Start Investigation" form submission.
+Severity = Literal["Critical", "High", "Medium", "Low"]
 
 
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add InvestigationOut Pydantic schema.
-#   Response schema for an investigation record. All columns from the investigations table.
-#   Include model_config = ConfigDict(from_attributes=True).
+class InvestigationCreate(BaseModel):
+    """Request schema for creating a new investigation."""
+    campaign_id: str
+    source_snapshot_id: Optional[str] = None
+    issue_type: str
+    severity: Severity
+    owner_name: Optional[str] = None
+    question: str
+    hypothesis: str
+    next_action: str
 
 
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add InvestigationEvidenceOut Pydantic schema.
-#   Response schema for evidence records. All columns from investigation_evidence table.
+class InvestigationOut(BaseModel):
+    """Response schema for an investigation record."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    campaign_id: str
+    source_snapshot_id: Optional[str] = None
+    issue_type: str
+    severity: str
+    status: str
+    owner_name: Optional[str] = None
+    question: str
+    hypothesis: str
+    next_action: str
+    resolution_summary: Optional[str] = None
+    opened_at: datetime
+    updated_at: datetime
+    resolved_at: Optional[datetime] = None
+
+
+class InvestigationEvidenceOut(BaseModel):
+    """Response schema for an investigation evidence record."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    investigation_id: str
+    snapshot_id: Optional[str] = None
+    evidence_type: str
+    title: str
+    summary: str
+    metric_name: Optional[str] = None
+    metric_value: Optional[float] = None
+    metric_unit: Optional[str] = None
+    source_label: Optional[str] = None
+    source_ref: Optional[str] = None
+    captured_at: datetime
+    captured_by: Optional[str] = None
+    is_key_evidence: Optional[bool] = False
+    sort_order: Optional[int] = None
 
 
 # TODO [Step 10 — Day 2 / Module 03 — Parallel Execution]: Add InvestigationStatusUpdate Pydantic schema.
