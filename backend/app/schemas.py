@@ -65,10 +65,21 @@ class CampaignOut(BaseModel):
 #   Used by the PATCH /investigations/{id}/status endpoint for status progression.
 
 
-# TODO [Step 2 — Day 1 / Module 02 — Economics]: Add AiRunOut Pydantic schema.
-#   Fields: id, investigation_id, model, task_type, input_tokens, output_tokens,
-#   estimated_cost_usd, latency_ms, prompt_summary, recommendation_summary, created_at.
-#   Used to surface AI usage data in the investigation detail view.
+class AiRunOut(BaseModel):
+    """Response schema for an AI run record."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    investigation_id: str
+    model: str
+    task_type: str
+    input_tokens: Optional[int] = None
+    output_tokens: Optional[int] = None
+    estimated_cost_usd: Optional[float] = None
+    latency_ms: Optional[int] = None
+    prompt_summary: Optional[str] = None
+    recommendation_summary: Optional[str] = None
+    created_at: datetime
 
 
 # TODO [Step 12 — Day 2 / Module 05 — Production Rollout]: Add AiRunCreate Pydantic schema (if needed).

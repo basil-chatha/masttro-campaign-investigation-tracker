@@ -52,6 +52,12 @@ def test_docs_endpoint_exists():
     assert response.status_code == 200
 
 
+def test_ai_runs_endpoint_exists():
+    """Test that /ai-runs endpoint exists and is routable."""
+    response = client.get("/ai-runs")
+    assert response.status_code in [200, 503]
+
+
 # TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add test_investigations_endpoint_exists().
 #   Verify POST /investigations and GET /investigations routes are routable.
 #   Follow the same pattern as test_campaigns_endpoint_exists (accept 200 or 503).

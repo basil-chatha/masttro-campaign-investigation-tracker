@@ -5,7 +5,7 @@ Main FastAPI application entry point.
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.routers import campaigns
+from app.routers import campaigns, ai_runs
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -41,10 +41,7 @@ app.include_router(campaigns.router)
 #   Then: `from app.routers import investigations` and `app.include_router(investigations.router)`.
 #   This router handles investigation CRUD: create, list, get by id, and status updates.
 
-# TODO [Step 12 — Day 2 / Module 05 — Production Rollout]: Import and register the ai_runs router.
-#   Create `app/routers/ai_runs.py` with an APIRouter(prefix="/ai-runs").
-#   Endpoints: GET /investigations/{id}/ai-runs (list AI runs for an investigation).
-#   Surfaces AI usage data to close the economics loop from Step 2.
+app.include_router(ai_runs.router)
 
 
 @app.get("/health")

@@ -63,13 +63,21 @@ class CampaignHealth(Base):
     delivery_note = Column(Text)
 
 
-# TODO [Step 2 — Day 1 / Module 02 — Economics]: Add the AiRun ORM model.
-#   Maps to the `ai_runs` table. Columns: id, investigation_id (FK → investigations.id),
-#   model, task_type, input_tokens, output_tokens, estimated_cost_usd, latency_ms,
-#   prompt_summary, recommendation_summary, created_at.
-#   This gives the product a concrete place to log AI activity for economics discussion.
-#   Keep it intentionally minimal — enough to log model, latency, token/cost estimate,
-#   and which investigation it relates to.
+class AiRun(Base):
+    """AI run log — tracks model usage, cost, and latency per investigation."""
+    __tablename__ = "ai_runs"
+
+    id = Column(String(50), primary_key=True, index=True)
+    investigation_id = Column(String(50), ForeignKey("investigations.id"), index=True)
+    model = Column(String(100))
+    task_type = Column(String(100))
+    input_tokens = Column(Integer)
+    output_tokens = Column(Integer)
+    estimated_cost_usd = Column(Float)
+    latency_ms = Column(Integer)
+    prompt_summary = Column(Text)
+    recommendation_summary = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 # TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add the Investigation ORM model.
