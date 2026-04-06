@@ -9,7 +9,7 @@ from datetime import datetime
 from sqlalchemy import (
     Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Text,
 )
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
@@ -42,6 +42,8 @@ class Campaign(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    health_snapshots = relationship("CampaignHealth", back_populates="campaign", order_by="CampaignHealth.snapshot_at")
+
 
 class CampaignHealth(Base):
     """Campaign health snapshots — time-series performance data."""
@@ -61,6 +63,8 @@ class CampaignHealth(Base):
     anomaly_flag = Column(Boolean, default=False)
     anomaly_reason = Column(String(255))
     delivery_note = Column(Text)
+
+    campaign = relationship("Campaign", back_populates="health_snapshots")
 
 
 class AiRun(Base):

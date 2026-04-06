@@ -58,15 +58,22 @@ def test_ai_runs_endpoint_exists():
     assert response.status_code in [200, 503]
 
 
+def test_campaign_detail_endpoint_exists():
+    """Test that GET /campaigns/{id} is routable."""
+    response = client.get("/campaigns/cmp_1001")
+    assert response.status_code in [200, 404, 503]
+
+
+def test_campaign_health_endpoint_exists():
+    """Test that GET /campaigns/{id}/health is routable."""
+    response = client.get("/campaigns/cmp_1001/health")
+    assert response.status_code in [200, 404, 503]
+
+
 # TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add test_investigations_endpoint_exists().
 #   Verify POST /investigations and GET /investigations routes are routable.
 #   Follow the same pattern as test_campaigns_endpoint_exists (accept 200 or 503).
 #   Run at least one real validation step as part of the ticket→code→test workflow.
-
-
-# TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add test_campaign_detail_endpoint_exists().
-#   Verify GET /campaigns/{id} is routable. Use a known campaign id from seed data
-#   or accept 200/404/503 to confirm the route is registered.
 
 
 # TODO [Step 10 — Day 2 / Module 03 — Parallel Execution]: Add test_investigation_status_update().

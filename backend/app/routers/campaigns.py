@@ -5,12 +5,12 @@ Additional endpoints (campaign detail, health snapshots, investigations)
 will be added during the workshop.
 """
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, and_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.models import Campaign, CampaignHealth
-from app.schemas import CampaignOut
+from app.schemas import CampaignOut, CampaignDetailOut, CampaignHealthOut
 
 router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 
@@ -53,17 +53,34 @@ def list_campaigns(db: Session = Depends(get_db)):
     return results
 
 
-# TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add GET /campaigns/{campaign_id} endpoint.
-#   Returns a single campaign with its associated health snapshots.
-#   Use CampaignDetailOut as response_model. Query Campaign by id, join/load
-#   CampaignHealth records. Raise 404 if campaign not found.
-#   This is the AIDLC demo vehicle — plan the approach, clarify required fields
-#   and what success means, then implement.
+@router.get("/{campaign_id}", response_model=CampaignDetailOut)
+def get_campaign(campaign_id: str, db: Session = Depends(get_db)):
+    """Get a single campaign with its health snapshots."""
+    campaign = (
+        db.query(Campaign)
+        .options(joinedload(Campaign.health_snapshots))
+        .filter(Campaign.id == campaign_id)
+        .first()
+    )
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    # Match list endpoint logic: check only the latest snapshot
+    campaign.needs_help = bool(campaign.health_snapshots and campaign.health_snapshots[-1].anomaly_flag)
+    return campaign
 
 
-# TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add GET /campaigns/{campaign_id}/health endpoint.
-#   Returns health snapshots for a specific campaign, ordered by snapshot_at.
-#   Useful as a standalone endpoint for the frontend to fetch health data separately.
+@router.get("/{campaign_id}/health", response_model=List[CampaignHealthOut])
+def get_campaign_health(campaign_id: str, db: Session = Depends(get_db)):
+    """Get health snapshots for a specific campaign, ordered by time."""
+    campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    return (
+        db.query(CampaignHealth)
+        .filter(CampaignHealth.campaign_id == campaign_id)
+        .order_by(CampaignHealth.snapshot_at)
+        .all()
+    )
 
 
 # TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add GET /campaigns/{campaign_id}/investigations endpoint.

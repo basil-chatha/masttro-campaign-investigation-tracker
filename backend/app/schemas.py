@@ -6,7 +6,7 @@ for health snapshots, investigations, and AI runs will be built
 during the workshop as new endpoints are added.
 """
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
 
 
@@ -31,17 +31,29 @@ class CampaignOut(BaseModel):
     needs_help: bool = False
 
 
-# TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add CampaignHealthOut Pydantic schema.
-#   Fields: id, campaign_id, snapshot_at, impressions, clicks, ctr, viewability,
-#   completion_rate, spend_usd, budget_pacing_pct, delivery_rate_pct, anomaly_flag,
-#   anomaly_reason, delivery_note.
-#   Needed for the campaign detail endpoint that returns health snapshot data.
+class CampaignHealthOut(BaseModel):
+    """Response schema for a campaign health snapshot."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    campaign_id: str
+    snapshot_at: datetime
+    impressions: Optional[int] = None
+    clicks: Optional[int] = None
+    ctr: float
+    viewability: float
+    completion_rate: Optional[float] = None
+    spend_usd: float
+    budget_pacing_pct: Optional[float] = None
+    delivery_rate_pct: Optional[float] = None
+    anomaly_flag: Optional[bool] = False
+    anomaly_reason: Optional[str] = None
+    delivery_note: Optional[str] = None
 
 
-# TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add CampaignDetailOut Pydantic schema.
-#   Extends CampaignOut with a nested list of CampaignHealthOut snapshots
-#   (e.g. `health_snapshots: List[CampaignHealthOut]`).
-#   Used as the response model for GET /campaigns/{id}.
+class CampaignDetailOut(CampaignOut):
+    """Response schema for campaign detail with health snapshots."""
+    health_snapshots: List[CampaignHealthOut] = []
 
 
 # TODO [Step 5 — Day 1 / Module 05 — Workflow Deep Dive]: Add InvestigationCreate Pydantic schema.
