@@ -42,6 +42,10 @@
 
 - `investigation-triage` — triage a campaign investigation: review field quality, evidence completeness, status appropriateness, and suggest next action. Read-only.
 
+## Custom agents
+
+- `investigation-reviewer` — reviews code changes touching investigations, evidence, status transitions, or AI runs. Read-only domain specialist with project memory.
+
 ## Approval boundaries
 
 - Any schema or migration change requires explicit human approval.

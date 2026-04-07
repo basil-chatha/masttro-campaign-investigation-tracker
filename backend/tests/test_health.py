@@ -2,6 +2,7 @@
 Tests for health and basic connectivity.
 These tests verify the API is structured correctly.
 """
+import os
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
@@ -103,6 +104,9 @@ def test_investigation_status_update():
     assert response.status_code in [200, 404, 422, 503]
 
 
-# TODO [Step 10 — Day 2 / Module 03 — Parallel Execution]: Consider creating a separate
-#   test file `tests/test_investigations.py` for investigation-specific tests.
-#   Parallel work split: one stream handles backend logic, one handles tests.
+def test_investigation_reviewer_agent_exists():
+    """Test that the investigation-reviewer agent definition exists."""
+    agent_path = os.path.join(
+        os.path.dirname(__file__), "..", "..", ".claude", "agents", "investigation-reviewer.md"
+    )
+    assert os.path.isfile(agent_path), "investigation-reviewer agent definition missing"
