@@ -50,6 +50,12 @@
 - Evidence types: Metric, Delivery Note, Operator Note, QA Check, Recommendation.
 - Core investigation fields: question, hypothesis, owner, next_action.
 
+## Pilot plan
+
+- The Week 1 pilot plan lives in `docs/pilot-plan.md`.
+- It defines the narrow workflow scope, KPI baselines, ownership, non-goals, and the 30/60/90 path from pilot to production.
+- Do not expand the pilot scope without updating this artifact and confirming the decision gate criteria are met.
+
 ## What stays local (not in this repo)
 
 - `.env` files with database URLs, API keys, and secrets
