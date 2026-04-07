@@ -60,6 +60,12 @@
 - It defines the narrow workflow scope, KPI baselines, ownership, non-goals, and the 30/60/90 path from pilot to production.
 - Do not expand the pilot scope without updating this artifact and confirming the decision gate criteria are met.
 
+## Automation hooks
+
+- A `PreToolUse` safety guard (`.claude/hooks/safety-guard.sh`) enforces approval boundaries before Bash commands.
+- Blocked commands exit with code 2; the reason is fed back to Claude as context.
+- Hook changes require a session restart to take effect.
+
 ## What stays local (not in this repo)
 
 - `.env` files with database URLs, API keys, and secrets
