@@ -1,4 +1,4 @@
----
+<!-- ---
 paths: apps/nextjs/src/app/api/**/*.ts
 ---
 
@@ -6,4 +6,4 @@ paths: apps/nextjs/src/app/api/**/*.ts
 
 - All API endpoints must include input validation
 - Use the standard error response format
-- Include OpenAPI documentation comments
+- Include OpenAPI documentation comments -->
