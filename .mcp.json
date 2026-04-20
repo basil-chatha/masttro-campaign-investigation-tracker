@@ -19,11 +19,11 @@
             "args": ["@playwright/mcp@latest"]
         },
         "exa": {
-            "type": "stdio",
+            "type": "http",
             "command": "npx",
-            "args": ["-y", "exa-mcp-server", "--tools", "get_code_context_exa"],
+            "args": ["-y", "exa-mcp-server"],
             "env": {
-                "EXA_API_KEY": "${EXA_API_KEY}"
+                "EXA_API_KEY": "EXA_API_KEY"
             }
         }
     }
