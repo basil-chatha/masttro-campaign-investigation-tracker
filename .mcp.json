@@ -19,7 +19,7 @@
             "args": ["@playwright/mcp@latest"]
         },
         "exa": {
-            "type": "http",
+            "type": "stdio",
             "command": "npx",
             "args": ["-y", "exa-mcp-server"],
             "env": {
