@@ -10,12 +10,25 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "input=$(cat); model=$(echo \"$input\" | jq -r '.model.display_name'); dir=$(echo \"$input\" | jq -r '.workspace.current_dir'); branch=$(git -C \"$dir\" rev-parse --abbrev-ref HEAD 2>/dev/null || echo ''); if [ -n \"$branch\" ] && [ -n \"$(git -C \"$dir\" status --porcelain 2>/dev/null | head -1)\" ]; then branch=\"$branch*\"; fi; usage=$(echo \"$input\" | jq '.context_window.current_usage'); if [ \"$usage\" != \"null\" ]; then current=$(echo \"$usage\" | jq '.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens'); size=$(echo \"$input\" | jq '.context_window.context_window_size'); pct=$((current * 100 / size)); context_info=$(printf '%d%% context' \"$pct\"); else context_info=''; fi; if [ -n \"$branch\" ]; then printf '%s | %s | %s | %s' \"$model\" \"$(basename \"$dir\")\" \"$branch\" \"$context_info\"; else printf '%s | %s | %s' \"$model\" \"$(basename \"$dir\")\" \"$context_info\"; fi"
+    "command": "bash /Users/basilchatha/Documents/tries/2026-04-23-basil-chatha-masttro-campaign-investigation-tracker/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
     "code-review@claude-code-plugins": true,
     "frontend-design@claude-code-plugins": true,
     "commit-commands@claude-code-plugins": true
   },
-  "plansDirectory": "./.claude/plans"
+  "plansDirectory": "./.claude/plans",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|NotebookEdit|Grep|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-env-exposure.sh"
+          }
+        ]
+      }
+    ]
+  }
 }

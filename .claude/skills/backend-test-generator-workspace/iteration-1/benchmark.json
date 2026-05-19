@@ -1,0 +1,427 @@
+{
+  "metadata": {
+    "skill_name": "backend-test-generator",
+    "skill_path": "/Users/basilchatha/Documents/tries/2026-04-23-basil-chatha-masttro-campaign-investigation-tracker/.claude/skills/backend-test-generator",
+    "executor_model": "claude-opus-4-7",
+    "analyzer_model": "claude-opus-4-7",
+    "timestamp": "2026-05-08T17:07:06.822114+00:00",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "campaigns-router-tests",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 197.5,
+        "tokens": 55944,
+        "tool_calls": 19,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output contains a pytest test file targeted at backend/tests/",
+          "passed": true,
+          "evidence": "outputs/backend/tests/test_campaigns.py exists"
+        },
+        {
+          "text": "Test file imports TestClient from fastapi.testclient",
+          "passed": true,
+          "evidence": "Line 30: 'from fastapi.testclient import TestClient'"
+        },
+        {
+          "text": "Test file imports the FastAPI app from app.main",
+          "passed": true,
+          "evidence": "Line 33: 'from app.main import app'"
+        },
+        {
+          "text": "At least one test invokes client.get('/campaigns')",
+          "passed": true,
+          "evidence": "Multiple tests call client.get('/campaigns'), e.g. line 147"
+        },
+        {
+          "text": "Tests assert specific status codes (not just truthy responses)",
+          "passed": true,
+          "evidence": "Tests assert 200, 503, 405, 307 explicitly (lines 148, 160, 169, 185)"
+        },
+        {
+          "text": "Acknowledges the 200/503 lazy-DB dual contract",
+          "passed": true,
+          "evidence": "Line 148: 'assert response.status_code in (200, 503)' with explanatory docstring"
+        },
+        {
+          "text": "Tests use plain function style matching test_health.py",
+          "passed": true,
+          "evidence": "All tests are plain 'def test_\u2026' functions; no unittest.TestCase class inheritance"
+        },
+        {
+          "text": "Tests are deterministic \u2014 no time.now(), random, or live network calls",
+          "passed": true,
+          "evidence": "Uses fixed datetime(2026, 1, 1) literals; no random; no http calls outside TestClient"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "campaigns-router-tests",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 279.8,
+        "tokens": 51482,
+        "tool_calls": 17,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output contains a pytest test file targeted at backend/tests/",
+          "passed": true,
+          "evidence": "outputs/backend/tests/test_campaigns.py exists"
+        },
+        {
+          "text": "Test file imports TestClient from fastapi.testclient",
+          "passed": true,
+          "evidence": "Line 28: 'from fastapi.testclient import TestClient'"
+        },
+        {
+          "text": "Test file imports the FastAPI app from app.main",
+          "passed": true,
+          "evidence": "Line 33: 'from app.main import app'"
+        },
+        {
+          "text": "At least one test invokes client.get('/campaigns')",
+          "passed": true,
+          "evidence": "Multiple tests, e.g. line 52"
+        },
+        {
+          "text": "Tests assert specific status codes (not just truthy responses)",
+          "passed": true,
+          "evidence": "Asserts 200, 503, 404, 405 explicitly"
+        },
+        {
+          "text": "Acknowledges the 200/503 lazy-DB dual contract",
+          "passed": true,
+          "evidence": "Line 53: 'assert response.status_code in (200, 503)' with docstring"
+        },
+        {
+          "text": "Tests use plain function style matching test_health.py",
+          "passed": true,
+          "evidence": "All tests are plain 'def test_\u2026' functions"
+        },
+        {
+          "text": "Tests are deterministic \u2014 no time.now(), random, or live network calls",
+          "passed": true,
+          "evidence": "Uses fixed datetime(2026, 1, 1, 12, 0, 0); no random; only TestClient calls"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "broaden-test-coverage",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 340.3,
+        "tokens": 72139,
+        "tool_calls": 25,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Adds at least 3 new test functions covering uncovered areas",
+          "passed": true,
+          "evidence": "16 new tests across 3 files (test_campaigns.py, test_app_contract.py, test_database.py)"
+        },
+        {
+          "text": "Identifies and tests at least one specific gap (schemas, RuntimeError->503 handler, lazy-DB, response_model)",
+          "passed": true,
+          "evidence": "Tests RuntimeError->503 handler (test_app_contract.py:24), lazy-DB (test_database.py), CampaignOut OpenAPI schema (test_app_contract.py:104)"
+        },
+        {
+          "text": "SUMMARY.md explicitly enumerates the gaps chosen and the rationale",
+          "passed": true,
+          "evidence": "Agent report (saved as SUMMARY.md) breaks down 3 files with explicit gap rationale per file"
+        },
+        {
+          "text": "SUMMARY.md explicitly notes what was deliberately deferred",
+          "passed": true,
+          "evidence": "Defers TODO routes, real Postgres, stricter CORS, async client, ORM/Pydantic-only tests with reasons"
+        },
+        {
+          "text": "Tests follow the project's existing style (TestClient, plain functions, similar imports)",
+          "passed": true,
+          "evidence": "Module-level client = TestClient(app), plain 'def test_\u2026' functions throughout"
+        },
+        {
+          "text": "No tests reference routes/resources that don't exist yet (no /investigations or /ai-runs)",
+          "passed": true,
+          "evidence": "Tests only target implemented routes; explicitly defers TODO routes per SUMMARY"
+        },
+        {
+          "text": "No tests require a live database, network, or unconfigured external service",
+          "passed": true,
+          "evidence": "Uses app.dependency_overrides + _FakeSession; sqlite:///:memory: in test_database.py"
+        },
+        {
+          "text": "If pydantic schemas are tested, the tests use the actual schema class",
+          "passed": true,
+          "evidence": "Imports CampaignOut and uses model_fields; test_app_contract validates against /openapi.json containing real schema"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "broaden-test-coverage",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 277.6,
+        "tokens": 51706,
+        "tool_calls": 19,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Adds at least 3 new test functions covering uncovered areas",
+          "passed": true,
+          "evidence": "Many tests across 4 files (test_campaigns.py, test_database.py, test_app_contract.py, test_schemas.py)"
+        },
+        {
+          "text": "Identifies and tests at least one specific gap (schemas, RuntimeError->503 handler, lazy-DB, response_model)",
+          "passed": true,
+          "evidence": "test_database.py covers lazy-DB; test_app_contract.py covers 503/CORS/OpenAPI; test_schemas.py covers CampaignOut directly"
+        },
+        {
+          "text": "SUMMARY.md explicitly enumerates the gaps chosen and the rationale",
+          "passed": true,
+          "evidence": "Agent report (saved as SUMMARY.md) walks through 4 files with explicit per-file rationale"
+        },
+        {
+          "text": "SUMMARY.md explicitly notes what was deliberately deferred",
+          "passed": true,
+          "evidence": "Defers investigation/AI-runs tests, Postgres integration, status-transition tests, E2E with reasons"
+        },
+        {
+          "text": "Tests follow the project's existing style (TestClient, plain functions, similar imports)",
+          "passed": true,
+          "evidence": "Module-level client = TestClient(app), plain 'def test_\u2026' functions throughout"
+        },
+        {
+          "text": "No tests reference routes/resources that don't exist yet",
+          "passed": true,
+          "evidence": "Tests only implemented routes; defers TODO routes explicitly"
+        },
+        {
+          "text": "No tests require a live database, network, or unconfigured external service",
+          "passed": true,
+          "evidence": "Uses app.dependency_overrides + sqlite:///:memory: throughout"
+        },
+        {
+          "text": "If pydantic schemas are tested, the tests use the actual schema class",
+          "passed": true,
+          "evidence": "test_schemas.py imports CampaignOut from app.schemas and exercises model_validate / model_dump / model_json_schema directly"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "test-api-error-paths",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 385.0,
+        "tokens": 73350,
+        "tool_calls": 24,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Includes at least one test that asserts 405 Method Not Allowed",
+          "passed": true,
+          "evidence": "Multiple parametrized tests for POST/DELETE/PUT/PATCH on GET-only routes (lines 32-72)"
+        },
+        {
+          "text": "Includes at least one test that asserts 404 Not Found on an unknown URL",
+          "passed": true,
+          "evidence": "test_unknown_top_level_path_returns_404 (line 79); test_typo_of_health_returns_404 (line 85); plus more"
+        },
+        {
+          "text": "Includes a test that exercises the 503 lazy-DB / RuntimeError fallback path",
+          "passed": true,
+          "evidence": "test_campaigns_503_response_is_json_with_detail (line 138) clears _engine, _SessionLocal, DATABASE_URL via monkeypatch; test_runtime_error_handler_translates_to_503 (line 164) uses dependency_overrides"
+        },
+        {
+          "text": "Avoids fabricating error contracts not present in current code (e.g. does NOT assert 422 on GET /campaigns)",
+          "passed": true,
+          "evidence": "No 422 assertions; explicitly notes in SUMMARY that 422 has no real cases today since no endpoint declares validated body/query/path params"
+        },
+        {
+          "text": "Test file uses TestClient and plain pytest functions, matching project style",
+          "passed": true,
+          "evidence": "Module-level client = TestClient(app); all tests are plain 'def test_\u2026' functions, no unittest.TestCase or pytest classes"
+        },
+        {
+          "text": "Does not modify any production code under backend/app/ to make tests pass",
+          "passed": true,
+          "evidence": "Only file written under backend/ in outputs/ is the test file itself; no production files in outputs"
+        },
+        {
+          "text": "SUMMARY.md is honest about which error paths exist vs. which would require new code to test",
+          "passed": true,
+          "evidence": "Agent report explicitly notes 422 has no test today and lists slot for future Step 5/10 endpoints; lists deferred areas (auth, rate limiting, real Postgres)"
+        },
+        {
+          "text": "Tests are deterministic and require no live network / external services",
+          "passed": true,
+          "evidence": "Only TestClient calls + monkeypatch on app.database; no random, no time.now()"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "test-api-error-paths",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.875,
+        "passed": 7,
+        "failed": 1,
+        "total": 8,
+        "time_seconds": 333.5,
+        "tokens": 50372,
+        "tool_calls": 20,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Includes at least one test that asserts 405 Method Not Allowed",
+          "passed": true,
+          "evidence": "TestWrongMethod class (line 86) with parametrized post/put/patch/delete tests on /health, /, /campaigns; plus test_405_includes_allow_header"
+        },
+        {
+          "text": "Includes at least one test that asserts 404 Not Found on an unknown URL",
+          "passed": true,
+          "evidence": "TestUnknownRoutes class (line 33) with test_unknown_top_level_route_returns_404 and parametrized tests"
+        },
+        {
+          "text": "Includes a test that exercises the 503 lazy-DB / RuntimeError fallback path",
+          "passed": true,
+          "evidence": "TestLazyDbFallback class (line 148) with _force_db_unconfigured helper that monkeypatches _engine/_SessionLocal/DATABASE_URL; test_runtime_error_handler_converts_to_503 uses synthetic router"
+        },
+        {
+          "text": "Avoids fabricating error contracts not present in current code (e.g. does NOT assert 422 on GET /campaigns)",
+          "passed": true,
+          "evidence": "TestMalformedInput class explicitly documents that no 422 cases exist today and uses placeholder tests instead (lines 238-265)"
+        },
+        {
+          "text": "Test file uses TestClient and plain pytest functions, matching project style",
+          "passed": false,
+          "evidence": "FAILS: tests are organized into pytest classes (class TestUnknownRoutes, TestWrongMethod, TestCors, TestLazyDbFallback, TestMalformedInput, TestErrorResponseShape) instead of plain 'def test_\u2026' functions like the existing test_health.py uses. The skill explicitly directs matching the existing style; this baseline introduces a new convention."
+        },
+        {
+          "text": "Does not modify any production code under backend/app/ to make tests pass",
+          "passed": true,
+          "evidence": "Only the test file is in outputs/backend/; no production code edits"
+        },
+        {
+          "text": "SUMMARY.md is honest about which error paths exist vs. which would require new code to test",
+          "passed": true,
+          "evidence": "Agent report notes 422 has no real cases today; defers auth/rate-limiting/real-Postgres-failures explicitly"
+        },
+        {
+          "text": "Tests are deterministic and require no live network / external services",
+          "passed": true,
+          "evidence": "TestClient + monkeypatch only; no random; no real network"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 307.6,
+        "stddev": 97.9338,
+        "min": 197.5,
+        "max": 385.0
+      },
+      "tokens": {
+        "mean": 67144.3333,
+        "stddev": 9718.6537,
+        "min": 55944,
+        "max": 73350
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.9583,
+        "stddev": 0.0722,
+        "min": 0.875,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 296.9667,
+        "stddev": 31.6579,
+        "min": 277.6,
+        "max": 333.5
+      },
+      "tokens": {
+        "mean": 51186.6667,
+        "stddev": 714.3566,
+        "min": 50372,
+        "max": 51706
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.0417",
+      "time_seconds": "+10.6",
+      "tokens": "+15958"
+    }
+  },
+  "notes": [
+    "DISCRIMINATING ASSERTION: 'Tests use plain function style matching test_health.py' is the only assertion the with_skill version won on. Baseline eval-2 used pytest classes (TestUnknownRoutes, TestWrongMethod, etc.), deviating from the project's existing plain-function style. The skill's 'match existing conventions' phase caught this; without the skill, the agent reached for a more 'organized' default that introduces a new convention.",
+    "NON-DISCRIMINATING: 7 of 8 assertions per eval passed in both configurations. The base model produces high-quality FastAPI tests on its own for this stack. Future iterations should add discriminators that target subtler skill value (e.g. 'honors documented contracts like 200/503', 'avoids fabricating contracts not present in code', 'uses dependency injection seam rather than monkeypatching imports').",
+    "TOKEN COST: with_skill averaged 67k tokens vs 51k without (+31%). Reading SKILL.md + 2 reference files adds upfront cost. Consider whether the reference files can be more selectively loaded \u2014 only fastapi.md was used here; general.md was probably duplicative since most of its principles are restated in fastapi.md.",
+    "TIME: with_skill averaged 308s vs 297s (+11s, within noise \u2014 with_skill stddev is 98s while baseline is 32s, so this difference is not statistically meaningful at n=1 per cell).",
+    "SAMPLE SIZE: Only 1 run per (eval, config). Variance estimates are unreliable. Consider 2-3 runs per cell in iteration 2 for stability \u2014 the with_skill stddev on time is 3x the baseline, hinting at high variance in reference-loading paths that one run can't characterize.",
+    "STACK COVERAGE GAP: All 3 evals tested FastAPI/pytest, the most familiar stack to base Claude. The skill includes references for Django, Express, NestJS, Rails, Go, Spring \u2014 the discrimination case for the skill is likely strongest on stacks where the base model is less fluent. A future iteration set should include 1+ eval on a less-common stack (e.g. NestJS or Spring Boot).",
+    "BASELINE ACTUALLY PRODUCED MORE FILES IN EVAL-1: without_skill wrote 4 test files (added test_schemas.py with pure Pydantic unit tests) vs with_skill's 3. The skill currently nudges away from 'test the framework / ORM / Pydantic standalone' \u2014 that's intentional per references/general.md, but the baseline's choice was arguably more thorough. Worth deciding whether the skill should be less prescriptive here, or whether the prescription is correct and the assertion should reward staying within boundary."
+  ]
+}

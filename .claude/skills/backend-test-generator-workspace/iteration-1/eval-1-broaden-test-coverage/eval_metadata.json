@@ -1,0 +1,15 @@
+{
+  "eval_id": 1,
+  "eval_name": "broaden-test-coverage",
+  "prompt": "Our backend test suite is pretty thin — see backend/tests/. Look at what we have, look at the rest of the backend, and add the most impactful missing tests. Don't try to cover everything; pick the highest-leverage gaps and explain what you chose.",
+  "assertions": [
+    "Adds at least 3 new test functions covering areas not covered by the existing test_health.py",
+    "Identifies and tests at least one specific gap from the current code: schemas validation, the RuntimeError->503 exception handler, a routers/__init__.py concern, or response_model behavior of /campaigns",
+    "SUMMARY.md explicitly enumerates the gaps chosen and the rationale",
+    "SUMMARY.md explicitly notes what was deliberately deferred and why",
+    "Tests follow the project's existing style — TestClient, plain function-based tests, and a similar import pattern to test_health.py",
+    "No tests reference routes/resources that don't exist yet in the code (e.g. no /investigations or /ai-runs tests)",
+    "No tests require a live database, network, or unconfigured external service",
+    "If pydantic schemas are tested, the tests use the actual schema class (not a hand-rolled stub)"
+  ]
+}

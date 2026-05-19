@@ -1,0 +1,15 @@
+{
+  "eval_id": 0,
+  "eval_name": "campaigns-router-tests",
+  "prompt": "Add tests for the campaigns endpoints. The router lives at backend/app/routers/campaigns.py and is registered in backend/app/main.py at the prefix /campaigns. Use the project's existing testing conventions.",
+  "assertions": [
+    "Output contains a pytest test file targeted at backend/tests/ (e.g. backend/tests/test_campaigns.py)",
+    "Test file imports TestClient from fastapi.testclient",
+    "Test file imports the FastAPI app from app.main",
+    "At least one test invokes client.get('/campaigns')",
+    "Tests assert specific status codes (not just truthy responses)",
+    "Acknowledges the 200/503 lazy-DB dual contract (e.g. status_code in [200, 503] or equivalent)",
+    "Tests use plain function style (def test_*(): ... assert ...) matching the existing test_health.py style — not unittest.TestCase",
+    "Tests are deterministic — no time.now(), random, or live network calls"
+  ]
+}

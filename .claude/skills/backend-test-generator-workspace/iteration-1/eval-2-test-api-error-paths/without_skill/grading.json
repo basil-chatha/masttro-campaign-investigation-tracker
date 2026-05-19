@@ -1,0 +1,12 @@
+{
+  "expectations": [
+    {"text": "Includes at least one test that asserts 405 Method Not Allowed", "passed": true, "evidence": "TestWrongMethod class (line 86) with parametrized post/put/patch/delete tests on /health, /, /campaigns; plus test_405_includes_allow_header"},
+    {"text": "Includes at least one test that asserts 404 Not Found on an unknown URL", "passed": true, "evidence": "TestUnknownRoutes class (line 33) with test_unknown_top_level_route_returns_404 and parametrized tests"},
+    {"text": "Includes a test that exercises the 503 lazy-DB / RuntimeError fallback path", "passed": true, "evidence": "TestLazyDbFallback class (line 148) with _force_db_unconfigured helper that monkeypatches _engine/_SessionLocal/DATABASE_URL; test_runtime_error_handler_converts_to_503 uses synthetic router"},
+    {"text": "Avoids fabricating error contracts not present in current code (e.g. does NOT assert 422 on GET /campaigns)", "passed": true, "evidence": "TestMalformedInput class explicitly documents that no 422 cases exist today and uses placeholder tests instead (lines 238-265)"},
+    {"text": "Test file uses TestClient and plain pytest functions, matching project style", "passed": false, "evidence": "FAILS: tests are organized into pytest classes (class TestUnknownRoutes, TestWrongMethod, TestCors, TestLazyDbFallback, TestMalformedInput, TestErrorResponseShape) instead of plain 'def test_…' functions like the existing test_health.py uses. The skill explicitly directs matching the existing style; this baseline introduces a new convention."},
+    {"text": "Does not modify any production code under backend/app/ to make tests pass", "passed": true, "evidence": "Only the test file is in outputs/backend/; no production code edits"},
+    {"text": "SUMMARY.md is honest about which error paths exist vs. which would require new code to test", "passed": true, "evidence": "Agent report notes 422 has no real cases today; defers auth/rate-limiting/real-Postgres-failures explicitly"},
+    {"text": "Tests are deterministic and require no live network / external services", "passed": true, "evidence": "TestClient + monkeypatch only; no random; no real network"}
+  ]
+}
