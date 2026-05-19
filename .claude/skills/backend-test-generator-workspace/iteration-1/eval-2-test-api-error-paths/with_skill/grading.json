@@ -1,0 +1,12 @@
+{
+  "expectations": [
+    {"text": "Includes at least one test that asserts 405 Method Not Allowed", "passed": true, "evidence": "Multiple parametrized tests for POST/DELETE/PUT/PATCH on GET-only routes (lines 32-72)"},
+    {"text": "Includes at least one test that asserts 404 Not Found on an unknown URL", "passed": true, "evidence": "test_unknown_top_level_path_returns_404 (line 79); test_typo_of_health_returns_404 (line 85); plus more"},
+    {"text": "Includes a test that exercises the 503 lazy-DB / RuntimeError fallback path", "passed": true, "evidence": "test_campaigns_503_response_is_json_with_detail (line 138) clears _engine, _SessionLocal, DATABASE_URL via monkeypatch; test_runtime_error_handler_translates_to_503 (line 164) uses dependency_overrides"},
+    {"text": "Avoids fabricating error contracts not present in current code (e.g. does NOT assert 422 on GET /campaigns)", "passed": true, "evidence": "No 422 assertions; explicitly notes in SUMMARY that 422 has no real cases today since no endpoint declares validated body/query/path params"},
+    {"text": "Test file uses TestClient and plain pytest functions, matching project style", "passed": true, "evidence": "Module-level client = TestClient(app); all tests are plain 'def test_…' functions, no unittest.TestCase or pytest classes"},
+    {"text": "Does not modify any production code under backend/app/ to make tests pass", "passed": true, "evidence": "Only file written under backend/ in outputs/ is the test file itself; no production files in outputs"},
+    {"text": "SUMMARY.md is honest about which error paths exist vs. which would require new code to test", "passed": true, "evidence": "Agent report explicitly notes 422 has no test today and lists slot for future Step 5/10 endpoints; lists deferred areas (auth, rate limiting, real Postgres)"},
+    {"text": "Tests are deterministic and require no live network / external services", "passed": true, "evidence": "Only TestClient calls + monkeypatch on app.database; no random, no time.now()"}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "expectations": [
+    {"text": "Output contains a pytest test file targeted at backend/tests/", "passed": true, "evidence": "outputs/backend/tests/test_campaigns.py exists"},
+    {"text": "Test file imports TestClient from fastapi.testclient", "passed": true, "evidence": "Line 28: 'from fastapi.testclient import TestClient'"},
+    {"text": "Test file imports the FastAPI app from app.main", "passed": true, "evidence": "Line 33: 'from app.main import app'"},
+    {"text": "At least one test invokes client.get('/campaigns')", "passed": true, "evidence": "Multiple tests, e.g. line 52"},
+    {"text": "Tests assert specific status codes (not just truthy responses)", "passed": true, "evidence": "Asserts 200, 503, 404, 405 explicitly"},
+    {"text": "Acknowledges the 200/503 lazy-DB dual contract", "passed": true, "evidence": "Line 53: 'assert response.status_code in (200, 503)' with docstring"},
+    {"text": "Tests use plain function style matching test_health.py", "passed": true, "evidence": "All tests are plain 'def test_…' functions"},
+    {"text": "Tests are deterministic — no time.now(), random, or live network calls", "passed": true, "evidence": "Uses fixed datetime(2026, 1, 1, 12, 0, 0); no random; only TestClient calls"}
+  ]
+}

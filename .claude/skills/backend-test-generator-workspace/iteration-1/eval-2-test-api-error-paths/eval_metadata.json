@@ -1,0 +1,15 @@
+{
+  "eval_id": 2,
+  "eval_name": "test-api-error-paths",
+  "prompt": "I want to make sure our backend API returns the right HTTP responses when things go wrong. Add tests that cover the error/edge-case behavior of our endpoints — wrong methods, bad input, missing resources, the lazy-DB 503 fallback. Keep them runnable with the project's existing pytest setup.",
+  "assertions": [
+    "Includes at least one test that asserts 405 Method Not Allowed (e.g. POST to a GET-only route)",
+    "Includes at least one test that asserts 404 Not Found on an unknown URL",
+    "Includes a test that exercises the 503 lazy-DB / RuntimeError fallback path (either via /campaigns when DATABASE_URL is unset, or by directly invoking the exception handler)",
+    "Avoids fabricating error contracts not present in current code (e.g. does NOT assert 422 on GET /campaigns, which has no request body)",
+    "Test file uses TestClient and plain pytest functions, matching project style",
+    "Does not modify any production code under backend/app/ to make tests pass",
+    "SUMMARY.md is honest about which error paths exist vs. which would require new code to test",
+    "Tests are deterministic and require no live network / external services"
+  ]
+}

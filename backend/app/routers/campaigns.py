@@ -4,8 +4,8 @@ Campaigns router — campaign list endpoint.
 Additional endpoints (campaign detail, health snapshots, investigations)
 will be added during the workshop.
 """
-from typing import List
-from fastapi import APIRouter, Depends
+from typing import List, Optional
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Campaign
@@ -15,13 +15,22 @@ router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 
 
 @router.get("", response_model=List[CampaignOut])
-def list_campaigns(db: Session = Depends(get_db)):
+def list_campaigns(
+    db: Session = Depends(get_db),
+    name: Optional[str] = Query(
+        None,
+        description="Optional case-insensitive substring filter on campaign name.",
+    ),
+):
     """
     Get all campaigns.
-    Returns a list of all campaigns in the system.
+    Returns a list of all campaigns in the system, optionally filtered by a
+    case-insensitive substring match on campaign name.
     """
-    campaigns = db.query(Campaign).all()
-    return campaigns
+    query = db.query(Campaign)
+    if name is not None and name.strip():
+        query = query.filter(Campaign.name.ilike(f"%{name.strip()}%"))
+    return query.all()
 
 
 # TODO [Step 4 — Day 1 / Module 04 — AIDLC]: Add GET /campaigns/{campaign_id} endpoint.

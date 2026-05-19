@@ -6,16 +6,34 @@ export default function CampaignList() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
-    getCampaigns()
-      .then((data) => { setCampaigns(data); setError(null); })
-      .catch((err) => { setError(err.message); setCampaigns([]); })
-      .finally(() => setLoading(false));
-  }, []);
+    let cancelled = false;
+    setLoading(true);
+    const timer = setTimeout(() => {
+      getCampaigns(search)
+        .then((data) => {
+          if (cancelled) return;
+          setCampaigns(data);
+          setError(null);
+        })
+        .catch((err) => {
+          if (cancelled) return;
+          setError(err.message);
+          setCampaigns([]);
+        })
+        .finally(() => {
+          if (cancelled) return;
+          setLoading(false);
+        });
+    }, 250);
 
-  if (loading) return <p className="text-muted-foreground">Loading campaigns…</p>;
-  if (error) return <p className="text-destructive">Error: {error}</p>;
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [search]);
 
   // TODO [Step 1 — Day 1 / Module 01 — First Win]: Make one tiny, visible change to the campaign list.
   //   Examples: add a health badge column, surface a delivery note, show an anomaly flag,
@@ -27,6 +45,19 @@ export default function CampaignList() {
     <div>
       <h2 className="mb-6 text-2xl font-semibold">Campaigns</h2>
 
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Filter by campaign name…"
+        className="mb-4 w-full max-w-sm rounded-md border px-3 py-2 text-sm"
+      />
+
+      {loading ? (
+        <p className="text-muted-foreground">Loading campaigns…</p>
+      ) : error ? (
+        <p className="text-destructive">Error: {error}</p>
+      ) : (
       <div className="overflow-hidden rounded-lg border">
         <table className="w-full text-sm">
           <thead className="border-b bg-muted/50">
@@ -76,6 +107,7 @@ export default function CampaignList() {
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 }

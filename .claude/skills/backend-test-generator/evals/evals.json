@@ -1,0 +1,26 @@
+{
+  "skill_name": "backend-test-generator",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "campaigns-router-tests",
+      "prompt": "Add tests for the campaigns endpoints. The router lives at backend/app/routers/campaigns.py and is registered in backend/app/main.py at the prefix /campaigns. Use the project's existing testing conventions.",
+      "expected_output": "A new pytest test file (or additions to an existing one) that exercises the GET /campaigns route. Tests should match the project style (FastAPI TestClient, plain functions with assert). Should account for the lazy-DB pattern where /campaigns may return 503 when DATABASE_URL is unset.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "eval_name": "broaden-test-coverage",
+      "prompt": "Our backend test suite is pretty thin — see backend/tests/. Look at what we have, look at the rest of the backend, and add the most impactful missing tests. Don't try to cover everything; pick the highest-leverage gaps and explain what you chose.",
+      "expected_output": "New tests covering high-value gaps (likely: route coverage for endpoints without tests, schema/validation tests, the lazy-DB 503 path, the RuntimeError->503 exception handler). Includes a brief written summary of what was added and why, and what was deliberately deferred.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "test-api-error-paths",
+      "prompt": "I want to make sure our backend API returns the right HTTP responses when things go wrong. Add tests that cover the error/edge-case behavior of our endpoints — wrong methods, bad input, missing resources, the lazy-DB 503 fallback. Keep them runnable with the project's existing pytest setup.",
+      "expected_output": "Tests targeting error paths: 404/405/422 where applicable, the documented 503 when the database isn't configured, and any other edge cases visible in the current code (e.g. unknown routes, malformed paths). Should run cleanly with `uv run pytest` against the current code without modifying production code.",
+      "files": []
+    }
+  ]
+}

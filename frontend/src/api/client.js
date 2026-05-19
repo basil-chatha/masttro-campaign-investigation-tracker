@@ -29,9 +29,13 @@ async function fetchApi(path) {
 }
 
 /**
- * Fetch all campaigns.
+ * Fetch all campaigns, optionally filtered by a case-insensitive name substring.
+ * @param {string} [name] — optional name substring filter
  */
-export async function getCampaigns() {
+export async function getCampaigns(name) {
+  if (typeof name === 'string' && name.trim() !== '') {
+    return fetchApi(`/campaigns?name=${encodeURIComponent(name.trim())}`);
+  }
   return fetchApi('/campaigns');
 }
 

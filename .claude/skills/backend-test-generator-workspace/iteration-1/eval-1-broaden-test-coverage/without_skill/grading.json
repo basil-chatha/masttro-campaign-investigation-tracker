@@ -1,0 +1,12 @@
+{
+  "expectations": [
+    {"text": "Adds at least 3 new test functions covering uncovered areas", "passed": true, "evidence": "Many tests across 4 files (test_campaigns.py, test_database.py, test_app_contract.py, test_schemas.py)"},
+    {"text": "Identifies and tests at least one specific gap (schemas, RuntimeError->503 handler, lazy-DB, response_model)", "passed": true, "evidence": "test_database.py covers lazy-DB; test_app_contract.py covers 503/CORS/OpenAPI; test_schemas.py covers CampaignOut directly"},
+    {"text": "SUMMARY.md explicitly enumerates the gaps chosen and the rationale", "passed": true, "evidence": "Agent report (saved as SUMMARY.md) walks through 4 files with explicit per-file rationale"},
+    {"text": "SUMMARY.md explicitly notes what was deliberately deferred", "passed": true, "evidence": "Defers investigation/AI-runs tests, Postgres integration, status-transition tests, E2E with reasons"},
+    {"text": "Tests follow the project's existing style (TestClient, plain functions, similar imports)", "passed": true, "evidence": "Module-level client = TestClient(app), plain 'def test_…' functions throughout"},
+    {"text": "No tests reference routes/resources that don't exist yet", "passed": true, "evidence": "Tests only implemented routes; defers TODO routes explicitly"},
+    {"text": "No tests require a live database, network, or unconfigured external service", "passed": true, "evidence": "Uses app.dependency_overrides + sqlite:///:memory: throughout"},
+    {"text": "If pydantic schemas are tested, the tests use the actual schema class", "passed": true, "evidence": "test_schemas.py imports CampaignOut from app.schemas and exercises model_validate / model_dump / model_json_schema directly"}
+  ]
+}
